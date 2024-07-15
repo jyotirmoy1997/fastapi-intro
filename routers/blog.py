@@ -1,18 +1,11 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 from schemas import Blog, ShowBlog
 from sqlalchemy.orm import Session
-from db import SessionLocal
+from db import get_db
 from typing import List
 import models
 
 router = APIRouter()
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 # Getting All Blogs
 @router.get("/", response_model = List[ShowBlog])

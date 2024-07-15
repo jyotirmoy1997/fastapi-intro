@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from routers import blog
-from routers import details
+from routers import blog, details, user
 import uvicorn
 import models
 from db import engine
@@ -13,6 +12,7 @@ models.Base.metadata.create_all(bind = engine)
 
 app.include_router(blog.router, prefix="/blog", tags=["blog"])
 app.include_router(details.router, prefix="/details", tags=["details"])
+app.include_router(user.router, prefix="/user", tags=["user"])
 
 
 @app.get("/")
