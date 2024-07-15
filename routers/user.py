@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from schemas import User
+from schemas import User, ShowUser
 from sqlalchemy.orm import Session
 from db import get_db
 import models
@@ -14,7 +14,7 @@ def getUsers():
     return "Users"
 
 
-@router.post("/")
+@router.post("/", response_model=ShowUser)
 def addUser(request : User, db : Session = Depends(get_db)):
     new_user = models.User(name = request.name, 
                            email = request.email,
