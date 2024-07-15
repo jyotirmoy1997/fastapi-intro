@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, status, HTTPException
-from request_schemas import Blog
+from schemas import Blog, ShowBlog
 from sqlalchemy.orm import Session
 from db import SessionLocal
+from typing import List
 import models
 
 router = APIRouter()
@@ -14,14 +15,14 @@ def get_db():
         db.close()
 
 # Getting All Blogs
-@router.get("/")
+@router.get("/", response_model = List[ShowBlog])
 def index(db : Session = Depends(get_db)):
     blogs = db.query(models.Blog).all()
     return blogs
 
 
 # Getting a single blog by id
-@router.get("/{id}")
+@router.get("/{id}", response_model = ShowBlog)
 def get_blog(id : int, db : Session = Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == id).first()
     # If blog not matches, then we have to throw a 404 not found error
@@ -62,7 +63,7 @@ def destroy(id: int, db: Session = Depends(get_db)):
     if not blog:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Blog not found")
     
-    db.query(models.Blog).filter(models.Blog.id == id).delete(synchronize_session=False)
+    blog.delete(synchronize_session=False)
     db.commit()
     return {
         "msg": "Content Deleted"
